@@ -19,7 +19,7 @@ class Othello:
         self.initialize_board()
     
     def initialize_board(self):
-        self.board = np.zeros((Othello.dimension, Othello.dimension))
+        self.board = np.zeros((Othello.dimension, Othello.dimension), dtype=int)
         self.board[3,3] = Othello.white
         self.board[4,4] = Othello.white
         self.board[3,4] = Othello.black
@@ -129,3 +129,9 @@ class Othello:
             children.append(child)
         
         return children
+    
+    def board_to_string(self, board=None):
+        if board is None:
+            board = self.board
+        
+        return ",".join( board.astype(str).flatten() )
