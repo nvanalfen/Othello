@@ -33,6 +33,12 @@ class Othello:
     def in_bounds(self, x, y):
         return x >= 0 and x < Othello.dimension - 1 \
                 and y >= 0 and y < Othello.dimension - 1
+                
+    def make_move(self, move, board=None):
+        if board is None:
+            self.board = move
+        else:
+            board = move
     
     # Crawls towards [y+dy, x+dx]
     # If will only return indices if the crawl started at one color, crawled over the other color, and lands on a blank
