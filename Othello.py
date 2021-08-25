@@ -28,11 +28,13 @@ class Othello:
     def get_indices(self, side, board=None):
         if board is None:
             board = self.board
-        return np.where( board == side )
+
+        y, x = np.where( board == side )
+        inds = np.vstack([x,y]).T
+        return inds
     
     def in_bounds(self, x, y):
-        return x >= 0 and x < Othello.dimension - 1 \
-                and y >= 0 and y < Othello.dimension - 1
+        return x >= 0 and x < Othello.dimension and y >= 0 and y < Othello.dimension
                 
     def make_move(self, move, board=None):
         if board is None:
@@ -101,6 +103,9 @@ class Othello:
             
         inds = self.get_indices(side, board=board)
         moves = set()
+        
+        if len(inds) == 0:
+            return moves
         for x, y in inds:
             # Union the set of current coordinates with the new ones
             moves |= self.get_possible_moves(x, y, board=board)
@@ -129,15 +134,32 @@ class Othello:
         
         children = []
         
-        for x, y in self.get_all_possible_moves(side, board=board):
+        moves = self.get_all_possible_moves(side, board=board)
+        if len(moves) == 0:
+            return children
+        
+        for x, y in moves:
             child = np.array(board)
             self.place_piece(x, y, side, board=child)
             children.append(child)
         
         return children
     
+    def is_complete(self, board=None):
+        if board is None:
+            board = self.board
+        return not 0 in board
+    
+    def score_board(self, board=None):
+        if board is None:
+            board = self.board
+        return np.sum(board)
+    
     def board_to_string(self, board=None):
         if board is None:
             board = self.board
         
         return ",".join( board.astype(str).flatten() )
+    
+    def string_to_board(self, board_representation):
+        return np.array( board_representation.split(",") ).astype(int).reshape( (Othello.dimension, Othello.dimension) )

@@ -86,7 +86,7 @@ class OthelloAgent:
         
         final_score = 0
         
-        for child in game.get_children( -turn, board_representation ):
+        for child in game.get_children( -turn, board=game.string_to_board(board_representation) ):
             score = self.traverse_n_layers(game, -turn, game.board_to_string(child), layer+1)
             
             if self.single_track_traversal:
@@ -102,6 +102,9 @@ class OthelloAgent:
         
     def random_move(self, game):
         options = game.get_children(self.side)
+        
+        if len(options) == 0:
+            return None
         return random.choices(options)[0]
     
     def greedy_move(self, game):
@@ -124,6 +127,8 @@ class OthelloAgent:
             options.append( child )
             weights.append( score )
         
+        if len(options) == 0:
+            return None
         return random.choices(options, weights)[0]
     
     def epsilon_greedy_move(self, game):
@@ -140,5 +145,6 @@ class OthelloAgent:
             move = self.greedy_probabilistic_move(game)
         elif self.move_type == "random":
             move = self.random_move(game)
-                
-        game.make_move( move )
+        
+        if not move is None:
+            game.make_move( move )
